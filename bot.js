@@ -1,22 +1,9 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
-
-client.on('ready', () => {
-    console.log('I am ready!');
-});
-
-client.on('message', message => {
-    if (message.content === 'ping') {
-        message.reply('pong');
-      }
-});
-
-const Discord = require('discord.js');
 const fs = require('fs');
 const hero = new Discord.Client({disableEveryone: true, maxMessagesCache: 1});
-const config = { prefix: "$" };
-const tpoints = {};
-const vpoints = {};
+const config = require('./Configuration.json');
+const tpoints = JSON.parse(fs.readFileSync('./Text.json', 'UTF8'));
+const vpoints = JSON.parse(fs.readFileSync('./Voice.json', 'UTF8'));
 hero.config = config;
 hero.login(hero.config.token);
 hero.on('ready',async () => {
@@ -24,8 +11,10 @@ hero.on('ready',async () => {
   hero.users.forEach(m => {
     if(m.bot) return;
     if(!tpoints[m.id]) tpoints[m.id] = {points: 0, id: m.id};
+    fs.writeFileSync("./Text.json", JSON.stringify(tpoints, null, 2));
 
     if(!vpoints[m.id]) vpoints[m.id] = {points: 0, id: m.id};
+    fs.writeFileSync("./Voice.json", JSON.stringify(vpoints, null, 2));
   });
 });
 
@@ -39,6 +28,7 @@ hero.on('message',async message => {
 
   let rPoints = Math.floor(Math.random() * 4) + 1;// Random Points
   tpoints[author.id].points += rPoints;
+  fs.writeFileSync("./Text.json", JSON.stringify(tpoints, null, 2));
   if(args[0] === `${hero.config.prefix}top`) {
     let _voicePointer = 1;
     let _textPointer = 1;
@@ -69,9 +59,9 @@ hero.on('voiceStateUpdate', (u, member) => {
     if(!member.voiceChannel) return;
     if(member.selfDeafen) return;
     vpoints[author].points += rPoints;
+    fs.writeFileSync("./Voice.json", JSON.stringify(vpoints, null, 2));
   }, 5000); // 5 Secs
 });
-
 
 
 
