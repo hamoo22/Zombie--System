@@ -131,15 +131,7 @@ if(!message.guild.member(client.user).hasPermission("MANAGE_ROLES")) return mess
 
 
 
-client.on('typingStart', (ch, user) => {
-    if(user.presence.status === 'offline') {
-        
-        ch.send(`${user} هاهاهاا , كشفتك وانت تكتب ي اوف لاين`)
-        .then(msg => {
-            msg.delete(10000)
-        })
-    }
-})
+
 
 client.on('message', message => {
     var prefix = "م";
@@ -176,7 +168,9 @@ client.on ("guildMemberAdd", member => {
 
 
 
-
+client.on('ready', () => {
+    console.log('I am ready!');
+});
 
 
 
